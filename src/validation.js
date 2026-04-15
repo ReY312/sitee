@@ -55,7 +55,7 @@ function validateSelectedDate(selectedDateRaw) {
   today.setHours(0, 0, 0, 0);
 
   const maxDate = new Date(today);
-  maxDate.setDate(maxDate.getDate() + 90);
+  maxDate.setDate(maxDate.getDate() + 365);
 
   if (date < today || date > maxDate) {
     return { valid: false, date: null };
