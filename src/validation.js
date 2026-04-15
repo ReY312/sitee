@@ -41,6 +41,29 @@ function hasValidSnilsChecksum(snilsDigits) {
   return checksum === control;
 }
 
+function validateSelectedDate(selectedDateRaw) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(selectedDateRaw)) {
+    return { valid: false, date: null };
+  }
+
+  const date = new Date(`${selectedDateRaw}T00:00:00`);
+  if (Number.isNaN(date.valueOf())) {
+    return { valid: false, date: null };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const maxDate = new Date(today);
+  maxDate.setDate(maxDate.getDate() + 90);
+
+  if (date < today || date > maxDate) {
+    return { valid: false, date: null };
+  }
+
+  return { valid: true, date };
+}
+
 export function validatePayload(payload) {
   const errors = [];
   const fullName = String(payload?.fullName ?? '').trim().replace(/\s+/g, ' ');
@@ -53,17 +76,10 @@ export function validatePayload(payload) {
     errors.push('Некорректный СНИЛС.');
   }
 
-  const dateTimeRaw = String(payload?.appointmentAt ?? '');
-  const appointmentDate = new Date(dateTimeRaw);
-  if (Number.isNaN(appointmentDate.valueOf())) {
-    errors.push('Некорректная дата/время.');
-  } else {
-    const now = Date.now();
-    const appointmentTime = appointmentDate.valueOf();
-    const maxForward = now + 1000 * 60 * 60 * 24 * 90;
-    if (appointmentTime < now + 1000 * 60 * 10 || appointmentTime > maxForward) {
-      errors.push('Дата должна быть не ранее чем через 10 минут и не позднее 90 дней.');
-    }
+  const selectedDateRaw = String(payload?.selectedDate ?? '').trim();
+  const checkedDate = validateSelectedDate(selectedDateRaw);
+  if (!checkedDate.valid) {
+    errors.push('Некорректная дата записи.');
   }
 
   return {
@@ -72,7 +88,7 @@ export function validatePayload(payload) {
     data: {
       fullName,
       snils,
-      appointmentAt: dateTimeRaw,
+      selectedDate: selectedDateRaw,
     },
   };
 }

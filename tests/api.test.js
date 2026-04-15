@@ -11,6 +11,10 @@ function makeConfig() {
     supabaseServiceRoleKey: 'service-key',
     rateLimitWindowMs: 900000,
     rateLimitMax: 100,
+    slotCapacity: 2,
+    slotStartHour: 9,
+    slotEndHour: 17,
+    slotDurationMinutes: 30,
     missing: [],
   };
 }
@@ -25,9 +29,16 @@ async function startServer(supabaseMock) {
   };
 }
 
+function futureDate() {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 test('POST /api/appointments creates ticket', async () => {
   const supabaseMock = {
-    async rpc() {
+    async rpc(_fn, params) {
+      assert.equal(params.p_slot_capacity, 2);
       return [{ ticket_id: 77, appointment_at: '2026-05-20T10:00:00+00:00' }];
     },
   };
@@ -39,7 +50,6 @@ test('POST /api/appointments creates ticket', async () => {
   assert.ok(cookie);
   const token = cookie.split(';')[0].split('=')[1];
 
-  const appointmentAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
   const response = await fetch(`${baseUrl}/api/appointments`, {
     method: 'POST',
     headers: {
@@ -51,20 +61,19 @@ test('POST /api/appointments creates ticket', async () => {
     body: JSON.stringify({
       fullName: 'Иванов Иван Иванович',
       snils: '112-233-445 95',
-      appointmentAt,
+      selectedDate: futureDate(),
     }),
   });
 
   assert.equal(response.status, 201);
-
   server.close();
 });
 
-test('POST /api/appointments returns 409 on duplicate snils', async () => {
+test('POST /api/appointments returns 422 if no slots', async () => {
   const supabaseMock = {
     async rpc() {
-      const error = new Error('duplicate');
-      error.status = 409;
+      const error = new Error('No free slot for selected date');
+      error.payload = { message: 'No free slot for selected date' };
       throw error;
     },
   };
@@ -74,7 +83,6 @@ test('POST /api/appointments returns 409 on duplicate snils', async () => {
   const cookie = html.headers.get('set-cookie');
   const token = cookie.split(';')[0].split('=')[1];
 
-  const appointmentAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
   const response = await fetch(`${baseUrl}/api/appointments`, {
     method: 'POST',
     headers: {
@@ -86,11 +94,11 @@ test('POST /api/appointments returns 409 on duplicate snils', async () => {
     body: JSON.stringify({
       fullName: 'Иванов Иван Иванович',
       snils: '112-233-445 95',
-      appointmentAt,
+      selectedDate: futureDate(),
     }),
   });
 
-  assert.equal(response.status, 409);
+  assert.equal(response.status, 422);
   server.close();
 });
 
@@ -98,7 +106,6 @@ test('POST /api/appointments blocks missing csrf', async () => {
   const supabaseMock = { rpc: async () => [{ ticket_id: 1, appointment_at: new Date().toISOString() }] };
   const { server, baseUrl } = await startServer(supabaseMock);
 
-  const appointmentAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
   const response = await fetch(`${baseUrl}/api/appointments`, {
     method: 'POST',
     headers: {
@@ -108,7 +115,7 @@ test('POST /api/appointments blocks missing csrf', async () => {
     body: JSON.stringify({
       fullName: 'Иванов Иван Иванович',
       snils: '112-233-445 95',
-      appointmentAt,
+      selectedDate: futureDate(),
     }),
   });
 

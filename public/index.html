@@ -3,39 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Электронная очередь | Daluniver style</title>
+    <title>Электронная очередь</title>
     <meta name="csrf-token" content="__CSRF_TOKEN__" />
     <link rel="stylesheet" href="/assets/styles.css" />
   </head>
   <body>
-    <header class="hero">
-      <div class="container">
-        <h1>Электронная очередь</h1>
-        <p>Запишитесь на прием без регистрации: выберите время и оставьте данные.</p>
-      </div>
-    </header>
+    <main class="page">
+      <a class="back-link" href="#">← Вернуться</a>
 
-    <main class="container card">
-      <form id="queue-form" novalidate>
-        <label>
-          ФИО
-          <input id="fullName" name="fullName" type="text" autocomplete="name" required minlength="5" maxlength="120" />
-        </label>
+      <section class="layout">
+        <aside class="panel calendar-panel">
+          <div id="calendar" class="calendar"></div>
+        </aside>
 
-        <label>
-          СНИЛС
-          <input id="snils" name="snils" type="text" inputmode="numeric" placeholder="000-000-000 00" required />
-        </label>
+        <section class="panel form-panel">
+          <p id="placeholder" class="placeholder">Выберите день из календаря</p>
 
-        <label>
-          Дата и время приема
-          <input id="appointmentAt" name="appointmentAt" type="datetime-local" required />
-        </label>
-
-        <button type="submit">Записаться</button>
-      </form>
-      <p id="message" role="status" aria-live="polite"></p>
+          <form id="queue-form" class="hidden" novalidate>
+            <p class="selected-date" id="selected-date"></p>
+            <input id="fullName" name="fullName" type="text" placeholder="ФИО абитуриента" autocomplete="name" required />
+            <input id="snils" name="snils" type="text" inputmode="numeric" placeholder="СНИЛС" required />
+            <button type="submit">Записаться</button>
+          </form>
+        </section>
+      </section>
     </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="logo-block">
+          <div class="logo-circle">ЛГУ</div>
+        </div>
+        <div class="contacts">
+          <p><strong>Телефон:</strong> 8 (8572) 34-48-28</p>
+          <p><strong>Факс:</strong> 8 (8572) 34-48-28</p>
+          <p><strong>Электронная почта:</strong> dahl.univer@yandex.ru</p>
+          <p><strong>Приемная комиссия:</strong> +7 (959) 1-35-75-35</p>
+        </div>
+      </div>
+    </footer>
+
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-text">
+      <div class="modal-card">
+        <p id="modal-text"></p>
+        <button id="close-modal" type="button">Ок</button>
+      </div>
+    </div>
 
     <script src="/assets/app.js" defer></script>
   </body>

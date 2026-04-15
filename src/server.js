@@ -48,6 +48,10 @@ async function readRequestBody(req, limitBytes = 10_000) {
   return Buffer.concat(chunks).toString('utf-8');
 }
 
+function toTimeString(hour) {
+  return `${String(hour).padStart(2, '0')}:00:00`;
+}
+
 export function createServer({ config = loadConfig(), supabase = null } = {}) {
   const headers = secureHeaders(config.appOrigin);
   const rateLimiter = createRateLimiter({
@@ -139,12 +143,16 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
           return;
         }
 
-        const { fullName, snils, appointmentAt } = validation.data;
+        const { fullName, snils, selectedDate } = validation.data;
 
         const [result] = await supabaseClient.rpc('create_queue_request', {
           p_full_name: fullName,
           p_snils: formatSnils(snils),
-          p_appointment_at: appointmentAt,
+          p_visit_date: selectedDate,
+          p_slot_capacity: config.slotCapacity,
+          p_slot_start_time: toTimeString(config.slotStartHour),
+          p_slot_end_time: toTimeString(config.slotEndHour),
+          p_slot_minutes: config.slotDurationMinutes,
           p_ip_hash: ip,
         });
 
@@ -158,6 +166,12 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
           json(res, 409, {
             error: 'Для данного СНИЛС уже существует активная запись. Дождитесь посещения.',
           });
+          return;
+        }
+
+        const errText = String(error?.payload?.message || error?.message || '').toLowerCase();
+        if (errText.includes('no free slot')) {
+          json(res, 422, { error: 'На выбранную дату свободных слотов больше нет.' });
           return;
         }
 

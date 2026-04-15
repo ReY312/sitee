@@ -1,13 +1,13 @@
 :root {
-  --bg: #f4f8ff;
-  --primary: #0059b3;
-  --primary-2: #0b74e5;
-  --text: #11243d;
+  --bg: #f2f2f2;
+  --panel: #e9e9e9;
+  --input: #d3d3d3;
+  --blue: #00194d;
+  --accent: #1f45ff;
+  --text: #151515;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -16,71 +16,144 @@ body {
   color: var(--text);
 }
 
-.container {
-  width: min(900px, 92vw);
+.page {
+  width: min(1200px, 94vw);
+  margin: 2.5rem auto 0;
+  min-height: 68vh;
+}
+
+.back-link {
+  color: #111;
+  text-decoration: none;
+  font-size: 2rem;
+}
+
+.layout {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 2rem;
+}
+
+.panel {
+  border-radius: 22px;
+  background: var(--panel);
+  padding: 2rem;
+}
+
+.calendar-month + .calendar-month { margin-top: 1.5rem; }
+.calendar-title { font-size: 2rem; text-align: center; margin: 0 0 1rem; }
+.weekdays,
+.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.65rem; text-align: center; }
+.weekdays { color: #333; margin-bottom: 0.8rem; }
+.day {
+  border: 0;
+  background: transparent;
+  font-size: 1.75rem;
+  border-radius: 999px;
+  width: 3rem;
+  height: 3rem;
   margin: 0 auto;
 }
+.day.muted { color: #9b9b9b; }
+.day:not(.muted):hover { cursor: pointer; background: #ddd; }
+.day.active { outline: 3px solid var(--accent); color: #000; }
 
-.hero {
-  background: linear-gradient(120deg, var(--primary), var(--primary-2));
-  color: #fff;
-  padding: 3rem 0;
-}
+.form-panel { display: flex; align-items: center; justify-content: center; min-height: 360px; }
+.placeholder { color: #b4b4b4; font-size: 2.2rem; text-align: center; }
 
-.card {
-  margin-top: -1.5rem;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(5, 42, 79, 0.15);
-}
-
-form {
+#queue-form {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
+  width: min(560px, 100%);
 }
 
-label {
-  display: grid;
-  gap: 0.4rem;
-  font-weight: 700;
+.selected-date {
+  margin: 0;
+  text-align: center;
+  font-size: 1.4rem;
+  color: #646464;
 }
 
-input,
-button {
-  font: inherit;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: 1px solid #c6d6ef;
+#queue-form input,
+#queue-form button {
+  border: 0;
+  border-radius: 26px;
+  padding: 1rem 1.4rem;
+  font-size: 2rem;
 }
 
-input:focus {
-  outline: 2px solid #6facff;
-  border-color: #6facff;
+#queue-form input {
+  background: var(--input);
 }
 
-button {
-  border: none;
-  background: var(--primary);
+#queue-form button {
+  background: var(--blue);
   color: #fff;
-  font-weight: 700;
   cursor: pointer;
 }
 
-button:hover {
-  background: #00448a;
+.hidden { display: none !important; }
+
+.footer {
+  margin-top: 2rem;
+  background: #00113b;
+  color: #f1f2ff;
+  padding: 2rem 0;
 }
 
-#message {
-  margin-top: 1rem;
-  min-height: 1.4rem;
+.footer-inner {
+  width: min(1200px, 94vw);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.logo-circle {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 20%, #3f72ff, #132043);
+  display: grid;
+  place-content: center;
+  font-size: 3rem;
   font-weight: 700;
 }
 
-.success {
-  color: #0f7b38;
+.contacts p { margin: 0.5rem 0; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
 }
 
-.error {
-  color: #b21f2d;
+.modal-card {
+  width: min(760px, 94vw);
+  background: #d0d0d0;
+  border-radius: 56px;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+#modal-text { font-size: 3rem; margin: 0 0 1.5rem; }
+#close-modal {
+  border: 0;
+  border-radius: 20px;
+  padding: 0.75rem 2rem;
+  font-size: 1.5rem;
+  background: #111;
+  color: #fff;
+}
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  .day { font-size: 1.25rem; width: 2.5rem; height: 2.5rem; }
+  #queue-form input, #queue-form button { font-size: 1.2rem; }
+  .placeholder { font-size: 1.5rem; }
+  #modal-text { font-size: 2rem; }
 }
