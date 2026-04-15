@@ -1,0 +1,86 @@
+:root {
+  --bg: #f4f8ff;
+  --primary: #0059b3;
+  --primary-2: #0b74e5;
+  --text: #11243d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  width: min(900px, 92vw);
+  margin: 0 auto;
+}
+
+.hero {
+  background: linear-gradient(120deg, var(--primary), var(--primary-2));
+  color: #fff;
+  padding: 3rem 0;
+}
+
+.card {
+  margin-top: -1.5rem;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(5, 42, 79, 0.15);
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #c6d6ef;
+}
+
+input:focus {
+  outline: 2px solid #6facff;
+  border-color: #6facff;
+}
+
+button {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #00448a;
+}
+
+#message {
+  margin-top: 1rem;
+  min-height: 1.4rem;
+  font-weight: 700;
+}
+
+.success {
+  color: #0f7b38;
+}
+
+.error {
+  color: #b21f2d;
+}

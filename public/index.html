@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Электронная очередь | Daluniver style</title>
+    <meta name="csrf-token" content="__CSRF_TOKEN__" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <h1>Электронная очередь</h1>
+        <p>Запишитесь на прием без регистрации: выберите время и оставьте данные.</p>
+      </div>
+    </header>
+
+    <main class="container card">
+      <form id="queue-form" novalidate>
+        <label>
+          ФИО
+          <input id="fullName" name="fullName" type="text" autocomplete="name" required minlength="5" maxlength="120" />
+        </label>
+
+        <label>
+          СНИЛС
+          <input id="snils" name="snils" type="text" inputmode="numeric" placeholder="000-000-000 00" required />
+        </label>
+
+        <label>
+          Дата и время приема
+          <input id="appointmentAt" name="appointmentAt" type="datetime-local" required />
+        </label>
+
+        <button type="submit">Записаться</button>
+      </form>
+      <p id="message" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>
