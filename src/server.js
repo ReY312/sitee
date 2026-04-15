@@ -52,6 +52,45 @@ function toTimeString(hour) {
   return `${String(hour).padStart(2, '0')}:00:00`;
 }
 
+
+function isRpcSignatureError(error) {
+  const msg = String(error?.payload?.message || error?.message || '').toLowerCase();
+  return msg.includes('could not find the function public.create_queue_request')
+    || msg.includes('function public.create_queue_request(')
+    || msg.includes('no function matches the given name and argument types');
+}
+
+async function createQueueRequestWithFallback(supabaseClient, config, { fullName, snils, selectedDate, ip }) {
+  const modernPayload = {
+    p_full_name: fullName,
+    p_snils: formatSnils(snils),
+    p_visit_date: selectedDate,
+    p_slot_capacity: config.slotCapacity,
+    p_slot_start_time: toTimeString(config.slotStartHour),
+    p_slot_end_time: toTimeString(config.slotEndHour),
+    p_slot_minutes: config.slotDurationMinutes,
+    p_ip_hash: ip,
+  };
+
+  try {
+    return await supabaseClient.rpc('create_queue_request', modernPayload);
+  } catch (error) {
+    if (!isRpcSignatureError(error)) {
+      throw error;
+    }
+
+    const legacyDateTime = `${selectedDate}T${String(config.slotStartHour).padStart(2, '0')}:00:00.000Z`;
+    const legacyPayload = {
+      p_full_name: fullName,
+      p_snils: formatSnils(snils),
+      p_appointment_at: legacyDateTime,
+      p_ip_hash: ip,
+    };
+
+    return supabaseClient.rpc('create_queue_request', legacyPayload);
+  }
+}
+
 export function createServer({ config = loadConfig(), supabase = null } = {}) {
   const headers = secureHeaders(config.appOrigin);
   const rateLimiter = createRateLimiter({
@@ -145,15 +184,11 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
 
         const { fullName, snils, selectedDate } = validation.data;
 
-        const [result] = await supabaseClient.rpc('create_queue_request', {
-          p_full_name: fullName,
-          p_snils: formatSnils(snils),
-          p_visit_date: selectedDate,
-          p_slot_capacity: config.slotCapacity,
-          p_slot_start_time: toTimeString(config.slotStartHour),
-          p_slot_end_time: toTimeString(config.slotEndHour),
-          p_slot_minutes: config.slotDurationMinutes,
-          p_ip_hash: ip,
+        const [result] = await createQueueRequestWithFallback(supabaseClient, config, {
+          fullName,
+          snils,
+          selectedDate,
+          ip,
         });
 
         json(res, 201, {
@@ -175,8 +210,25 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
           return;
         }
 
+        if (errText.includes('active appointment already exists') || error?.payload?.code === '23505') {
+          json(res, 409, { error: 'Для данного СНИЛС уже существует активная запись. Дождитесь посещения.' });
+          return;
+        }
+
         if (error?.status === 413) {
           json(res, 413, { error: 'Слишком большой запрос.' });
+          return;
+        }
+
+        if (isRpcSignatureError(error)) {
+          json(res, 500, {
+            error: 'В Supabase не применена актуальная SQL-схема. Обновите функцию create_queue_request из supabase/schema.sql.',
+          });
+          return;
+        }
+
+        if (error?.status && error?.payload?.message) {
+          json(res, 502, { error: `Ошибка Supabase: ${error.payload.message}` });
           return;
         }
 

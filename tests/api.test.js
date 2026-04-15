@@ -102,6 +102,50 @@ test('POST /api/appointments returns 422 if no slots', async () => {
   server.close();
 });
 
+
+
+test('POST /api/appointments falls back to legacy RPC signature', async () => {
+  let call = 0;
+  const supabaseMock = {
+    async rpc(_fn, params) {
+      call += 1;
+      if (call === 1) {
+        const error = new Error('Could not find the function public.create_queue_request');
+        error.status = 400;
+        error.payload = { message: 'Could not find the function public.create_queue_request' };
+        throw error;
+      }
+
+      assert.ok(params.p_appointment_at);
+      return [{ ticket_id: 88, appointment_at: '2026-06-20T09:00:00+00:00' }];
+    },
+  };
+
+  const { server, baseUrl } = await startServer(supabaseMock);
+  const html = await fetch(`${baseUrl}/`);
+  const cookie = html.headers.get('set-cookie');
+  const token = cookie.split(';')[0].split('=')[1];
+
+  const response = await fetch(`${baseUrl}/api/appointments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Origin: 'http://localhost:3000',
+      Cookie: cookie,
+      'X-CSRF-Token': token,
+    },
+    body: JSON.stringify({
+      fullName: 'Иванов Иван Иванович',
+      snils: '112-233-445 95',
+      selectedDate: futureDate(),
+    }),
+  });
+
+  assert.equal(response.status, 201);
+  assert.equal(call, 2);
+  server.close();
+});
+
 test('POST /api/appointments blocks missing csrf', async () => {
   const supabaseMock = { rpc: async () => [{ ticket_id: 1, appointment_at: new Date().toISOString() }] };
   const { server, baseUrl } = await startServer(supabaseMock);

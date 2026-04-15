@@ -42,3 +42,18 @@ npm run start
 ```bash
 npm test
 ```
+
+## Диагностика ошибки 500
+
+Если приходит `500 Internal Server Error` при `POST /api/appointments`:
+1. Убедитесь, что SQL из `supabase/schema.sql` применен в вашем проекте Supabase.
+2. Проверьте, что backend использует актуальный `SUPABASE_SERVICE_ROLE_KEY`.
+3. В новой версии сервер автоматически пробует старую и новую сигнатуру `create_queue_request`, чтобы не падать при несовпадении схем.
+
+
+## Соответствие данных кнопки «Записаться» и schema.sql
+
+При нажатии кнопки фронтенд отправляет: `fullName`, `snils`, `selectedDate`.
+Backend преобразует это в RPC-параметры `p_full_name`, `p_snils`, `p_visit_date` + параметры слотов (`p_slot_capacity`, `p_slot_start_time`, `p_slot_end_time`, `p_slot_minutes`) и `p_ip_hash`.
+В `supabase/schema.sql` есть функция `create_queue_request` с точно такой сигнатурой.
+Также добавлена legacy-перегрузка `create_queue_request(p_full_name, p_snils, p_appointment_at, p_ip_hash)` для совместимости.
