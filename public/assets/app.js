@@ -119,6 +119,8 @@ function buildCalendar() {
   const month1 = new Date(now.getFullYear(), now.getMonth(), 1);
   const month2 = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   calendarContainer.append(createMonthView(month1), createMonthView(month2));
+
+  return `${parts.join('-')}${tail ? ` ${tail}` : ''}`;
 }
 
 snilsInput.addEventListener('input', () => {
