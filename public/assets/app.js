@@ -115,12 +115,10 @@ function createMonthView(startDate) {
 
 function buildCalendar() {
   calendarContainer.innerHTML = '';
-  const now = new Date();
-  const month1 = new Date(now.getFullYear(), now.getMonth(), 1);
-  const month2 = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  // По ТЗ отображаем фиксированно июнь и июль 2026.
+  const month1 = new Date(2026, 5, 1); // Июнь 2026
+  const month2 = new Date(2026, 6, 1); // Июль 2026
   calendarContainer.append(createMonthView(month1), createMonthView(month2));
-
-  return `${parts.join('-')}${tail ? ` ${tail}` : ''}`;
 }
 
 snilsInput.addEventListener('input', () => {
