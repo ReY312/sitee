@@ -1,0 +1,258 @@
+:root {
+  --bg: #f2f2f2;
+  --panel: #e9e9e9;
+  --input: #d3d3d3;
+  --blue: #00194d;
+  --accent: #1f45ff;
+  --text: #151515;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page {
+  width: min(1200px, 94vw);
+  margin: 2.5rem auto 0;
+  min-height: 68vh;
+}
+
+.back-link {
+  color: #111;
+  text-decoration: none;
+  font-size: clamp(1.2rem, 2.2vw, 2rem);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.layout {
+  margin-top: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1.25rem;
+}
+
+.panel {
+  border-radius: 22px;
+  background: var(--panel);
+  padding: clamp(1rem, 2.2vw, 2rem);
+}
+
+.calendar-month + .calendar-month { margin-top: 1rem; }
+.calendar-title {
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  text-align: center;
+  margin: 0 0 0.75rem;
+}
+
+.weekdays,
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(0.35rem, 1.2vw, 0.65rem);
+  text-align: center;
+}
+
+.weekdays {
+  color: #333;
+  margin-bottom: 0.55rem;
+  font-size: clamp(0.9rem, 1.6vw, 1.75rem);
+}
+
+.day {
+  border: 0;
+  background: transparent;
+  font-size: clamp(1rem, 2vw, 1.75rem);
+  border-radius: 999px;
+  width: clamp(2rem, 4vw, 3rem);
+  height: clamp(2rem, 4vw, 3rem);
+  margin: 0 auto;
+  touch-action: manipulation;
+}
+
+.day.muted { color: #9b9b9b; }
+.day:not(.muted):hover { cursor: pointer; background: #ddd; }
+.day.active { outline: 3px solid var(--accent); color: #000; }
+
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+}
+
+.placeholder {
+  color: #b4b4b4;
+  font-size: clamp(1.1rem, 3.2vw, 2.2rem);
+  text-align: center;
+  margin: 0;
+}
+
+#queue-form {
+  display: grid;
+  gap: 1rem;
+  width: min(560px, 100%);
+}
+
+.selected-date {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(0.95rem, 1.8vw, 1.4rem);
+  color: #646464;
+}
+
+#queue-form input,
+#queue-form button {
+  border: 0;
+  border-radius: 20px;
+  padding: 0.9rem 1.1rem;
+  font-size: clamp(1rem, 2vw, 2rem);
+  min-height: 48px;
+}
+
+#queue-form input { background: var(--input); }
+
+#queue-form button {
+  background: var(--blue);
+  color: #fff;
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+
+.footer {
+  margin-top: 2rem;
+  background: #00113b;
+  color: #f1f2ff;
+  padding: 2rem 0;
+}
+
+.footer-inner {
+  width: min(1200px, 94vw);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.logo-circle {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 20%, #3f72ff, #132043);
+  display: grid;
+  place-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.contacts p { margin: 0.5rem 0; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: min(760px, 94vw);
+  background: #d0d0d0;
+  border-radius: 38px;
+  padding: clamp(1.25rem, 4vw, 4rem) clamp(1rem, 3.5vw, 2rem);
+  text-align: center;
+}
+
+#modal-text {
+  font-size: clamp(1.3rem, 3vw, 3rem);
+  margin: 0 0 1rem;
+}
+
+#close-modal {
+  border: 0;
+  border-radius: 20px;
+  padding: 0.75rem 2rem;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  background: #111;
+  color: #fff;
+  min-height: 44px;
+}
+
+@media (max-width: 960px) {
+  .page { margin-top: 1.5rem; }
+  .layout { grid-template-columns: 1fr; }
+  .form-panel { min-height: auto; }
+}
+
+@media (max-width: 768px) {
+  .page {
+    width: min(100%, 100vw);
+    padding: 0 0.75rem;
+  }
+
+  .panel {
+    border-radius: 18px;
+    padding: 0.9rem;
+  }
+
+  .calendar-month + .calendar-month { margin-top: 0.75rem; }
+
+  .day {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .logo-circle {
+    width: 150px;
+    height: 150px;
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    margin-top: 0.8rem;
+    padding: 0 0.5rem;
+  }
+
+  .layout { margin-top: 0.75rem; gap: 0.75rem; }
+
+  .weekdays { font-size: 0.85rem; }
+
+  .day {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.95rem;
+  }
+
+  #queue-form input,
+  #queue-form button {
+    border-radius: 14px;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .modal {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .modal-card {
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
