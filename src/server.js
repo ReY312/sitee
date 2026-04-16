@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import http from 'node:http';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
@@ -50,26 +53,6 @@ async function readRequestBody(req, limitBytes = 10_000) {
 
 function toTimeString(hour) {
   return `${String(hour).padStart(2, '0')}:00:00`;
-}
-
-function isDuplicateSnilsError(error) {
-  const errText = String(error?.payload?.message || error?.message || '').toLowerCase();
-  return error?.status === 409 || error?.payload?.code === '23505' || errText.includes('active appointment already exists');
-}
-
-function formatAppointmentDateTime(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.valueOf())) {
-    return String(value);
-  }
-
-  return date.toLocaleString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 
@@ -188,8 +171,6 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
         return;
       }
 
-      let formattedSnilsForLookup = null;
-
       try {
         const rawBody = await readRequestBody(req);
         const payload = safeJsonParse(rawBody);
@@ -205,7 +186,6 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
         }
 
         const { fullName, snils, selectedDate } = validation.data;
-        formattedSnilsForLookup = formatSnils(snils);
 
         const [result] = await createQueueRequestWithFallback(supabaseClient, config, {
           fullName,
@@ -220,21 +200,9 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
           appointmentAt: result.appointment_at,
         });
       } catch (error) {
-        if (isDuplicateSnilsError(error)) {
-          try {
-            const existing = await supabaseClient.getActiveAppointmentBySnils?.(formattedSnilsForLookup);
-            if (existing?.appointment_at) {
-              json(res, 409, {
-                error: `Для данного СНИЛС уже существует запись на ${formatAppointmentDateTime(existing.appointment_at)}.`,
-              });
-              return;
-            }
-          } catch {
-            // fallback to generic duplicate message
-          }
-
+        if (error?.status === 409) {
           json(res, 409, {
-            error: 'Для данного СНИЛС уже существует активная запись.',
+            error: 'Для данного СНИЛС уже существует активная запись. Дождитесь посещения.',
           });
           return;
         }
@@ -242,6 +210,11 @@ export function createServer({ config = loadConfig(), supabase = null } = {}) {
         const errText = String(error?.payload?.message || error?.message || '').toLowerCase();
         if (errText.includes('no free slot')) {
           json(res, 422, { error: 'На выбранную дату свободных слотов больше нет.' });
+          return;
+        }
+
+        if (errText.includes('active appointment already exists') || error?.payload?.code === '23505') {
+          json(res, 409, { error: 'Для данного СНИЛС уже существует активная запись. Дождитесь посещения.' });
           return;
         }
 

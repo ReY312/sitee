@@ -60,8 +60,6 @@ begin
   slot_local := (p_visit_date::timestamp + p_slot_start_time);
   end_local := (p_visit_date::timestamp + p_slot_end_time);
 
-  -- Если слот заполнен (slot_count >= p_slot_capacity),
-  -- переходим на следующий слот через p_slot_minutes (обычно 30 минут).
   while slot_local < end_local loop
     slot_ts := slot_local at time zone 'UTC';
 

@@ -37,8 +37,6 @@ npm run start
 - Ограничение размера JSON body.
 - Сервисный ключ Supabase хранится только на backend.
 
-- При повторной попытке с тем же СНИЛС API возвращает дату/время существующей активной записи.
-
 ## Тесты
 
 ```bash
@@ -59,10 +57,3 @@ npm test
 Backend преобразует это в RPC-параметры `p_full_name`, `p_snils`, `p_visit_date` + параметры слотов (`p_slot_capacity`, `p_slot_start_time`, `p_slot_end_time`, `p_slot_minutes`) и `p_ip_hash`.
 В `supabase/schema.sql` есть функция `create_queue_request` с точно такой сигнатурой.
 Также добавлена legacy-перегрузка `create_queue_request(p_full_name, p_snils, p_appointment_at, p_ip_hash)` для совместимости.
-
-
-## Как менять лимит людей на одно время
-
-- `SLOT_CAPACITY` — это переменная-предел количества людей на один и тот же слот времени.
-- Если в слоте уже `SLOT_CAPACITY` записей, SQL-функция автоматически выбирает следующий слот.
-- Смещение на следующее время задается `SLOT_DURATION_MINUTES` (по умолчанию `30`, то есть +30 минут).

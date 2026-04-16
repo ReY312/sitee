@@ -146,48 +146,6 @@ test('POST /api/appointments falls back to legacy RPC signature', async () => {
   server.close();
 });
 
-
-
-test('POST /api/appointments returns existing appointment datetime for duplicate snils', async () => {
-  const supabaseMock = {
-    async rpc() {
-      const error = new Error('Active appointment already exists for SNILS');
-      error.status = 409;
-      error.payload = { code: '23505', message: 'Active appointment already exists for SNILS' };
-      throw error;
-    },
-    async getActiveAppointmentBySnils() {
-      return { appointment_at: '2026-06-20T10:00:00+00:00' };
-    },
-  };
-
-  const { server, baseUrl } = await startServer(supabaseMock);
-  const html = await fetch(`${baseUrl}/`);
-  const cookie = html.headers.get('set-cookie');
-  const token = cookie.split(';')[0].split('=')[1];
-
-  const response = await fetch(`${baseUrl}/api/appointments`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Origin: 'http://localhost:3000',
-      Cookie: cookie,
-      'X-CSRF-Token': token,
-    },
-    body: JSON.stringify({
-      fullName: 'Иванов Иван Иванович',
-      snils: '112-233-445 95',
-      selectedDate: futureDate(),
-    }),
-  });
-
-  assert.equal(response.status, 409);
-  const data = await response.json();
-  assert.match(data.error, /уже существует запись на/i);
-  assert.match(data.error, /2026|20\.06\.2026/);
-  server.close();
-});
-
 test('POST /api/appointments blocks missing csrf', async () => {
   const supabaseMock = { rpc: async () => [{ ticket_id: 1, appointment_at: new Date().toISOString() }] };
   const { server, baseUrl } = await startServer(supabaseMock);
