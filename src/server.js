@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import http from 'node:http';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';

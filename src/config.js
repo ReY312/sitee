@@ -1,11 +1,5 @@
 const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'];
 
-// Быстро редактируемые значения по умолчанию для распределения слотов.
-const DEFAULT_SLOT_CAPACITY = 5;
-const DEFAULT_SLOT_START_HOUR = 9;
-const DEFAULT_SLOT_END_HOUR = 17;
-const DEFAULT_SLOT_DURATION_MINUTES = 30;
-
 export function loadConfig(env = process.env) {
   const missing = required.filter((key) => !env[key]);
 
@@ -17,10 +11,10 @@ export function loadConfig(env = process.env) {
     supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY ?? '',
     rateLimitWindowMs: Number.parseInt(env.RATE_LIMIT_WINDOW_MS ?? '900000', 10),
     rateLimitMax: Number.parseInt(env.RATE_LIMIT_MAX ?? '20', 10),
-    slotCapacity: Number.parseInt(env.SLOT_CAPACITY ?? String(DEFAULT_SLOT_CAPACITY), 10),
-    slotStartHour: Number.parseInt(env.SLOT_START_HOUR ?? String(DEFAULT_SLOT_START_HOUR), 10),
-    slotEndHour: Number.parseInt(env.SLOT_END_HOUR ?? String(DEFAULT_SLOT_END_HOUR), 10),
-    slotDurationMinutes: Number.parseInt(env.SLOT_DURATION_MINUTES ?? String(DEFAULT_SLOT_DURATION_MINUTES), 10),
+    slotCapacity: Number.parseInt(env.SLOT_CAPACITY ?? '5', 10),
+    slotStartHour: Number.parseInt(env.SLOT_START_HOUR ?? '9', 10),
+    slotEndHour: Number.parseInt(env.SLOT_END_HOUR ?? '17', 10),
+    slotDurationMinutes: Number.parseInt(env.SLOT_DURATION_MINUTES ?? '30', 10),
     missing,
   };
 }

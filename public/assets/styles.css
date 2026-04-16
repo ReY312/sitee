@@ -25,98 +25,67 @@ body {
 .back-link {
   color: #111;
   text-decoration: none;
-  font-size: clamp(1.2rem, 2.2vw, 2rem);
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
+  font-size: 2rem;
 }
 
 .layout {
-  margin-top: 1.25rem;
+  margin-top: 2rem;
   display: grid;
   grid-template-columns: 1fr 1.4fr;
-  gap: 1.25rem;
+  gap: 2rem;
 }
 
 .panel {
   border-radius: 22px;
   background: var(--panel);
-  padding: clamp(1rem, 2.2vw, 2rem);
+  padding: 2rem;
 }
 
-.calendar-month + .calendar-month { margin-top: 1rem; }
-.calendar-title {
-  font-size: clamp(1.25rem, 2.2vw, 2rem);
-  text-align: center;
-  margin: 0 0 0.75rem;
-}
-
+.calendar-month + .calendar-month { margin-top: 1.5rem; }
+.calendar-title { font-size: 2rem; text-align: center; margin: 0 0 1rem; }
 .weekdays,
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: clamp(0.35rem, 1.2vw, 0.65rem);
-  text-align: center;
-}
-
-.weekdays {
-  color: #333;
-  margin-bottom: 0.55rem;
-  font-size: clamp(0.9rem, 1.6vw, 1.75rem);
-}
-
+.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.65rem; text-align: center; }
+.weekdays { color: #333; margin-bottom: 0.8rem; }
 .day {
   border: 0;
   background: transparent;
-  font-size: clamp(1rem, 2vw, 1.75rem);
+  font-size: 1.75rem;
   border-radius: 999px;
-  width: clamp(2rem, 4vw, 3rem);
-  height: clamp(2rem, 4vw, 3rem);
+  width: 3rem;
+  height: 3rem;
   margin: 0 auto;
-  touch-action: manipulation;
 }
-
 .day.muted { color: #9b9b9b; }
 .day:not(.muted):hover { cursor: pointer; background: #ddd; }
 .day.active { outline: 3px solid var(--accent); color: #000; }
 
-.form-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 360px;
-}
-
-.placeholder {
-  color: #b4b4b4;
-  font-size: clamp(1.1rem, 3.2vw, 2.2rem);
-  text-align: center;
-  margin: 0;
-}
+.form-panel { display: flex; align-items: center; justify-content: center; min-height: 360px; }
+.placeholder { color: #b4b4b4; font-size: 2.2rem; text-align: center; }
 
 #queue-form {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
   width: min(560px, 100%);
 }
 
 .selected-date {
   margin: 0;
   text-align: center;
-  font-size: clamp(0.95rem, 1.8vw, 1.4rem);
+  font-size: 1.4rem;
   color: #646464;
 }
 
 #queue-form input,
 #queue-form button {
   border: 0;
-  border-radius: 20px;
-  padding: 0.9rem 1.1rem;
-  font-size: clamp(1rem, 2vw, 2rem);
-  min-height: 48px;
+  border-radius: 26px;
+  padding: 1rem 1.4rem;
+  font-size: 2rem;
 }
 
-#queue-form input { background: var(--input); }
+#queue-form input {
+  background: var(--input);
+}
 
 #queue-form button {
   background: var(--blue);
@@ -166,93 +135,25 @@ body {
 .modal-card {
   width: min(760px, 94vw);
   background: #d0d0d0;
-  border-radius: 38px;
-  padding: clamp(1.25rem, 4vw, 4rem) clamp(1rem, 3.5vw, 2rem);
+  border-radius: 56px;
+  padding: 4rem 2rem;
   text-align: center;
 }
 
-#modal-text {
-  font-size: clamp(1.3rem, 3vw, 3rem);
-  margin: 0 0 1rem;
-}
-
+#modal-text { font-size: 3rem; margin: 0 0 1.5rem; }
 #close-modal {
   border: 0;
   border-radius: 20px;
   padding: 0.75rem 2rem;
-  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-size: 1.5rem;
   background: #111;
   color: #fff;
-  min-height: 44px;
 }
 
 @media (max-width: 960px) {
-  .page { margin-top: 1.5rem; }
   .layout { grid-template-columns: 1fr; }
-  .form-panel { min-height: auto; }
-}
-
-@media (max-width: 768px) {
-  .page {
-    width: min(100%, 100vw);
-    padding: 0 0.75rem;
-  }
-
-  .panel {
-    border-radius: 18px;
-    padding: 0.9rem;
-  }
-
-  .calendar-month + .calendar-month { margin-top: 0.75rem; }
-
-  .day {
-    width: 2.2rem;
-    height: 2.2rem;
-  }
-
-  .footer-inner {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .logo-circle {
-    width: 150px;
-    height: 150px;
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .page {
-    margin-top: 0.8rem;
-    padding: 0 0.5rem;
-  }
-
-  .layout { margin-top: 0.75rem; gap: 0.75rem; }
-
-  .weekdays { font-size: 0.85rem; }
-
-  .day {
-    width: 2rem;
-    height: 2rem;
-    font-size: 0.95rem;
-  }
-
-  #queue-form input,
-  #queue-form button {
-    border-radius: 14px;
-    padding: 0.75rem 0.9rem;
-  }
-
-  .modal {
-    padding: 0.5rem;
-    align-items: flex-end;
-  }
-
-  .modal-card {
-    width: 100%;
-    border-radius: 24px 24px 0 0;
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-  }
+  .day { font-size: 1.25rem; width: 2.5rem; height: 2.5rem; }
+  #queue-form input, #queue-form button { font-size: 1.2rem; }
+  .placeholder { font-size: 1.5rem; }
+  #modal-text { font-size: 2rem; }
 }
